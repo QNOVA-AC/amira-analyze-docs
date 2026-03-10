@@ -1,122 +1,264 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
+  "theme": "maple",
+  "name": "InsightFlow",
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5"
   },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "navbar": {
-    "links": [
+  "font": {
+    "heading": "Inter",
+    "body": "Inter",
+    "code": "JetBrains Mono"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "search": {
+    "placeholder": "Search API endpoints..."
+  },
+  "openapi": ["/api-reference/openapi.json"],
+  "api": {
+    "baseUrl": "https://api.staging.insightflow.studio",
+    "auth": {
+      "method": "key",
+      "name": "X-API-Key"
+    },
+    "playground": {
+      "mode": "show"
+    }
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
+  "navigation": {
+    "tabs": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "index",
+              "api-reference/introduction",
+              "api-reference/quickstart",
+              "api-reference/errors"
+            ]
+          },
+          {
+            "group": "Projects",
+            "pages": [
+              "api-reference/projects/list",
+              "api-reference/projects/create",
+              "api-reference/projects/get",
+              "api-reference/projects/update",
+              "api-reference/projects/delete"
+            ]
+          },
+          {
+            "group": "Service Partners",
+            "pages": [
+              "api-reference/service-partners/list",
+              "api-reference/service-partners/create",
+              "api-reference/service-partners/get",
+              "api-reference/service-partners/update",
+              "api-reference/service-partners/delete"
+            ]
+          },
+          {
+            "group": "Teams",
+            "pages": [
+              "api-reference/teams/list",
+              "api-reference/teams/create",
+              "api-reference/teams/get",
+              "api-reference/teams/update",
+              "api-reference/teams/delete"
+            ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "api-reference/agents/list",
+              "api-reference/agents/create",
+              "api-reference/agents/get",
+              "api-reference/agents/update",
+              "api-reference/agents/delete"
+            ]
+          },
+          {
+            "group": "Campaigns",
+            "pages": [
+              "api-reference/campaigns/list",
+              "api-reference/campaigns/create",
+              "api-reference/campaigns/get",
+              "api-reference/campaigns/update",
+              "api-reference/campaigns/delete",
+              "api-reference/campaigns/get-agents"
+            ]
+          },
+          {
+            "group": "Processing Jobs",
+            "pages": [
+              "api-reference/processing-jobs/list",
+              "api-reference/processing-jobs/create",
+              "api-reference/processing-jobs/get",
+              "api-reference/processing-jobs/update-status",
+              "api-reference/processing-jobs/retry"
+            ]
+          },
+          {
+            "group": "Processing Runs",
+            "pages": [
+              "api-reference/processing-runs/list",
+              "api-reference/processing-runs/get-analysis",
+              "api-reference/processing-runs/submit-evaluation",
+              "api-reference/processing-runs/reprocess",
+              "api-reference/processing-runs/update-speaker-labels"
+            ]
+          },
+          {
+            "group": "Evaluations",
+            "pages": [
+              "api-reference/evaluations/get",
+              "api-reference/evaluations/update-answers",
+              "api-reference/evaluations/exclude-analytics"
+            ]
+          },
+          {
+            "group": "Questions",
+            "pages": [
+              "api-reference/questions/list",
+              "api-reference/questions/create",
+              "api-reference/questions/get",
+              "api-reference/questions/update",
+              "api-reference/questions/delete"
+            ]
+          },
+          {
+            "group": "Questionnaires",
+            "pages": [
+              "api-reference/questionnaires/list",
+              "api-reference/questionnaires/create",
+              "api-reference/questionnaires/get",
+              "api-reference/questionnaires/update",
+              "api-reference/questionnaires/delete",
+              "api-reference/questionnaires/versions",
+              "api-reference/questionnaires/restore"
+            ]
+          },
+          {
+            "group": "Files",
+            "pages": [
+              "api-reference/files/browse",
+              "api-reference/files/search",
+              "api-reference/files/tree",
+              "api-reference/files/upload",
+              "api-reference/files/create-folder",
+              "api-reference/files/delete-folder",
+              "api-reference/files/get",
+              "api-reference/files/delete",
+              "api-reference/files/download",
+              "api-reference/files/stats",
+              "api-reference/files/history"
+            ]
+          },
+          {
+            "group": "Batch Processing",
+            "pages": [
+              "api-reference/batch-processing/get-patterns",
+              "api-reference/batch-processing/parse"
+            ]
+          },
+          {
+            "group": "Storage Connections",
+            "pages": [
+              "api-reference/storage-connections/list",
+              "api-reference/storage-connections/create",
+              "api-reference/storage-connections/test-new",
+              "api-reference/storage-connections/get",
+              "api-reference/storage-connections/update",
+              "api-reference/storage-connections/delete",
+              "api-reference/storage-connections/test",
+              "api-reference/storage-connections/sync",
+              "api-reference/storage-connections/sync-status"
+            ]
+          },
+          {
+            "group": "Sync Logs",
+            "pages": [
+              "api-reference/sync-logs/list",
+              "api-reference/sync-logs/get",
+              "api-reference/sync-logs/get-files"
+            ]
+          },
+          {
+            "group": "Analytics",
+            "pages": [
+              "api-reference/analytics/overview",
+              "api-reference/analytics/agent-scorecard",
+              "api-reference/analytics/compare",
+              "api-reference/analytics/blocks",
+              "api-reference/analytics/leaderboard",
+              "api-reference/analytics/trends",
+              "api-reference/analytics/communication",
+              "api-reference/analytics/calibration",
+              "api-reference/analytics/consistency"
+            ]
+          },
+          {
+            "group": "AI Analytics",
+            "pages": [
+              "api-reference/ai-analytics/agent-profile",
+              "api-reference/ai-analytics/improvement",
+              "api-reference/ai-analytics/insights",
+              "api-reference/ai-analytics/summary"
+            ]
+          },
+          {
+            "group": "Chatbot",
+            "pages": [
+              "api-reference/chatbot/list-conversations",
+              "api-reference/chatbot/create-conversation",
+              "api-reference/chatbot/get-conversation",
+              "api-reference/chatbot/delete-conversation",
+              "api-reference/chatbot/send-message"
+            ]
+          },
+          {
+            "group": "Comments",
+            "pages": [
+              "api-reference/comments/list",
+              "api-reference/comments/create",
+              "api-reference/comments/update",
+              "api-reference/comments/delete"
+            ]
+          },
+          {
+            "group": "Audit Logs",
+            "pages": [
+              "api-reference/audit-logs/list",
+              "api-reference/audit-logs/stats",
+              "api-reference/audit-logs/export",
+              "api-reference/audit-logs/get"
+            ]
+          }
+        ]
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
+    ]
   },
+  "background": {
+    "decoration": "grid"
+  },
+  "css": "/global.css",
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    "options": ["copy", "view", "claude", "cursor"]
   }
 }

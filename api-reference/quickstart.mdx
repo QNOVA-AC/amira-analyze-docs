@@ -1,0 +1,150 @@
+---
+title: "Quick Start"
+description: "Make your first API call in under a minute"
+icon: "bolt"
+---
+
+## 1. Get your API key
+
+Retrieve your organization API key from the InsightFlow dashboard under **Settings > API Keys**.
+
+Your key looks like this:
+```
+ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+## 2. Make your first request
+
+<Tabs>
+  <Tab title="cURL">
+    ```bash
+    curl -X GET https://api.staging.insightflow.studio/projects \
+      -H "X-API-Key: ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+      -H "Content-Type: application/json"
+    ```
+  </Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    const response = await fetch('https://api.staging.insightflow.studio/projects', {
+      headers: {
+        'X-API-Key': 'ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+    console.log(data);
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import requests
+
+    response = requests.get(
+        'https://api.staging.insightflow.studio/projects',
+        headers={
+            'X-API-Key': 'ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'Content-Type': 'application/json'
+        }
+    )
+
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+## 3. Understand the response
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Success",
+  "data": {
+    "projects": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Customer Support QA",
+        "projectKey": "CSQA",
+        "servicePartnerCount": 3,
+        "agentCount": 45,
+        "teamCount": 6,
+        "campaignCount": 2,
+        "createdAt": "2025-01-15T10:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 1,
+      "totalPages": 1,
+      "hasNextPage": false,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+
+## 4. Create your first project
+
+<Tabs>
+  <Tab title="cURL">
+    ```bash
+    curl -X POST https://api.staging.insightflow.studio/projects \
+      -H "X-API-Key: ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" \
+      -H "Content-Type: application/json" \
+      -d '{"name": "My First Project"}'
+    ```
+  </Tab>
+  <Tab title="JavaScript">
+    ```javascript
+    const response = await fetch('https://api.staging.insightflow.studio/projects', {
+      method: 'POST',
+      headers: {
+        'X-API-Key': 'ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: 'My First Project' })
+    });
+
+    const data = await response.json();
+    console.log(data);
+    ```
+  </Tab>
+  <Tab title="Python">
+    ```python
+    import requests
+
+    response = requests.post(
+        'https://api.staging.insightflow.studio/projects',
+        headers={
+            'X-API-Key': 'ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+            'Content-Type': 'application/json'
+        },
+        json={'name': 'My First Project'}
+    )
+
+    print(response.json())
+    ```
+  </Tab>
+</Tabs>
+
+## What's next?
+
+<Steps>
+  <Step title="Set up your hierarchy">
+    Create [Service Partners](/api-reference/service-partners/create), [Teams](/api-reference/teams/create), and [Agents](/api-reference/agents/create) under your project.
+  </Step>
+  <Step title="Configure evaluation criteria">
+    Create [Questions](/api-reference/questions/create) and assemble them into a [Questionnaire](/api-reference/questionnaires/create).
+  </Step>
+  <Step title="Launch a campaign">
+    Create a [Campaign](/api-reference/campaigns/create) linking your questionnaire to target agents.
+  </Step>
+  <Step title="Process recordings">
+    [Upload files](/api-reference/files/upload) and create a [Processing Job](/api-reference/processing-jobs/create) for AI or human evaluation.
+  </Step>
+  <Step title="Analyze results">
+    View [Analytics dashboards](/api-reference/analytics/overview), [AI insights](/api-reference/ai-analytics/insights), or chat with the [Analytics Chatbot](/api-reference/chatbot/create-conversation).
+  </Step>
+</Steps>

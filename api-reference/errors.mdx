@@ -1,0 +1,140 @@
+---
+title: "Error Handling"
+description: "HTTP status codes, error response format, and common error scenarios"
+icon: "triangle-exclamation"
+---
+
+## Error Response Format
+
+When a request fails, the API returns a standard error envelope:
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation failed: name is required",
+  "data": null
+}
+```
+
+## HTTP Status Codes
+
+| Code | Meaning | When it happens |
+|------|---------|-----------------|
+| `200` | **OK** | Request succeeded |
+| `201` | **Created** | Resource successfully created |
+| `204` | **No Content** | Resource deleted, no body returned |
+| `400` | **Bad Request** | Invalid parameters, missing required fields, or malformed JSON |
+| `401` | **Unauthorized** | Missing or invalid API key / JWT token |
+| `403` | **Forbidden** | Valid credentials but insufficient permissions |
+| `404` | **Not Found** | Resource does not exist or is not accessible |
+| `409` | **Conflict** | Duplicate resource (e.g., duplicate name within scope) |
+| `422` | **Unprocessable Entity** | Request is well-formed but contains semantic errors |
+| `429` | **Too Many Requests** | Rate limit exceeded — slow down and retry |
+| `500` | **Internal Server Error** | Something went wrong on our end |
+
+## Common Error Scenarios
+
+<AccordionGroup>
+  <Accordion title="Authentication errors (401)">
+    **Missing API key:**
+    ```json
+    {
+      "statusCode": 401,
+      "success": false,
+      "message": "API key is required"
+    }
+    ```
+
+    **Invalid API key format:**
+    ```json
+    {
+      "statusCode": 401,
+      "success": false,
+      "message": "Invalid API key format"
+    }
+    ```
+
+    **Expired JWT token:**
+    ```json
+    {
+      "statusCode": 401,
+      "success": false,
+      "message": "Token has expired"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Validation errors (400)">
+    **Missing required field:**
+    ```json
+    {
+      "statusCode": 400,
+      "success": false,
+      "message": "Validation failed: name is required"
+    }
+    ```
+
+    **Invalid UUID format:**
+    ```json
+    {
+      "statusCode": 400,
+      "success": false,
+      "message": "Validation failed: projectId must be a valid UUID"
+    }
+    ```
+
+    **Value out of range:**
+    ```json
+    {
+      "statusCode": 400,
+      "success": false,
+      "message": "Validation failed: limit must be between 1 and 100"
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Not found errors (404)">
+    ```json
+    {
+      "statusCode": 404,
+      "success": false,
+      "message": "Project not found"
+    }
+    ```
+
+    This can happen when:
+    - The resource ID does not exist
+    - The resource belongs to a different organization
+    - The resource was previously deleted
+  </Accordion>
+
+  <Accordion title="Rate limiting (429)">
+    ```json
+    {
+      "statusCode": 429,
+      "success": false,
+      "message": "Too many requests, please try again later"
+    }
+    ```
+
+    When rate limited, wait for the duration indicated in the `Retry-After` header before retrying.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Check status codes" icon="circle-check">
+    Always check the `success` field and `statusCode` rather than just parsing `data`.
+  </Card>
+  <Card title="Handle 429s gracefully" icon="clock">
+    Implement exponential backoff when you receive rate limit errors.
+  </Card>
+  <Card title="Validate before sending" icon="shield-check">
+    Validate UUIDs and required fields client-side to avoid unnecessary 400 errors.
+  </Card>
+  <Card title="Log error messages" icon="file-lines">
+    The `message` field contains human-readable details useful for debugging.
+  </Card>
+</CardGroup>

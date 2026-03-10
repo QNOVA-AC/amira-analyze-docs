@@ -1,97 +1,101 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "InsightFlow API"
+description: "Build powerful quality assurance workflows with the InsightFlow Public API"
+icon: "house"
 ---
 
-## Setting up
+<Note>
+  **Base URL** &nbsp; `https://api.staging.insightflow.studio` &nbsp;&nbsp;|&nbsp;&nbsp; **Version** &nbsp; `1.0.0` &nbsp;&nbsp;|&nbsp;&nbsp; **Auth** &nbsp; API Key or Bearer JWT
+</Note>
 
-Get your documentation site up and running in minutes.
+Get started quickly or dive into the full reference.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={3}>
+  <Card title="Quick Start" icon="bolt" href="/api-reference/quickstart">
+    First API call in under a minute
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="API Overview" icon="book" href="/api-reference/introduction">
+    Auth, pagination, and core concepts
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Error Handling" icon="triangle-exclamation" href="/api-reference/errors">
+    Status codes and error responses
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+---
 
-Everything you need to create world-class documentation.
+## Organization
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+Set up your hierarchy before processing files.
 
-## Need inspiration?
+<CardGroup cols={4}>
+  <Card title="Projects" icon="folder-open" href="/api-reference/projects/list">
+    Top-level containers
+  </Card>
+  <Card title="Service Partners" icon="building" href="/api-reference/service-partners/list">
+    Partner organizations
+  </Card>
+  <Card title="Teams" icon="users" href="/api-reference/teams/list">
+    Agent groups
+  </Card>
+  <Card title="Agents" icon="user" href="/api-reference/agents/list">
+    Evaluated individuals
+  </Card>
+</CardGroup>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Evaluation Workflow
+
+Process recordings and generate quality scores.
+
+<CardGroup cols={4}>
+  <Card title="Campaigns" icon="bullseye" href="/api-reference/campaigns/list">
+    Evaluation campaigns
+  </Card>
+  <Card title="Processing Jobs" icon="microchip" href="/api-reference/processing-jobs/list">
+    AI or human evaluation
+  </Card>
+  <Card title="Processing Runs" icon="rotate" href="/api-reference/processing-runs/list">
+    Track run progress
+  </Card>
+  <Card title="Evaluations" icon="clipboard-check" href="/api-reference/evaluations/get">
+    Scores and answers
+  </Card>
+</CardGroup>
+
+## Content & Storage
+
+Manage evaluation criteria and file storage.
+
+<CardGroup cols={4}>
+  <Card title="Questions" icon="circle-question" href="/api-reference/questions/list">
+    Question templates
+  </Card>
+  <Card title="Questionnaires" icon="list-check" href="/api-reference/questionnaires/list">
+    Versioned eval forms
+  </Card>
+  <Card title="Files" icon="file-audio" href="/api-reference/files/browse">
+    Audio/video files
+  </Card>
+  <Card title="Storage" icon="plug" href="/api-reference/storage-connections/list">
+    External connections
+  </Card>
+</CardGroup>
+
+## Intelligence & Admin
+
+Dashboards, AI insights, and operational tools.
+
+<CardGroup cols={4}>
+  <Card title="Analytics" icon="chart-mixed" href="/api-reference/analytics/overview">
+    Dashboards & trends
+  </Card>
+  <Card title="AI Analytics" icon="brain" href="/api-reference/ai-analytics/agent-profile">
+    AI-powered insights
+  </Card>
+  <Card title="Chatbot" icon="message-bot" href="/api-reference/chatbot/list-conversations">
+    Conversational analytics
+  </Card>
+  <Card title="Audit Logs" icon="scroll" href="/api-reference/audit-logs/list">
+    Activity tracking
+  </Card>
+</CardGroup>

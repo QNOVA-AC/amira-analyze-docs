@@ -1,216 +1,1749 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.3",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "InsightFlow Public API",
+    "description": "Public API for InsightFlow platform. All endpoints support authentication via API key (`X-API-Key` header) or Bearer JWT token. API keys provide full organization-level access.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "InsightFlow API Support"
+    }
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.staging.insightflow.studio",
+      "description": "Staging"
     }
   ],
   "security": [
-    {
-      "bearerAuth": []
-    }
+    { "ApiKeyAuth": [] },
+    { "BearerAuth": [] }
+  ],
+  "tags": [
+    { "name": "Projects", "description": "Manage projects" },
+    { "name": "Service Partners", "description": "Manage service partners" },
+    { "name": "Teams", "description": "Manage teams" },
+    { "name": "Agents", "description": "Manage agents" },
+    { "name": "Campaigns", "description": "Manage campaigns" },
+    { "name": "Processing Jobs", "description": "Create and manage processing jobs" },
+    { "name": "Processing Runs", "description": "View and manage processing runs" },
+    { "name": "Evaluations", "description": "View and update evaluations" },
+    { "name": "Batch Processing", "description": "Batch file parsing and patterns" },
+    { "name": "Files", "description": "File management and storage" },
+    { "name": "Storage Connections", "description": "External storage integrations" },
+    { "name": "Sync Logs", "description": "Storage sync logs" },
+    { "name": "Questions", "description": "Question templates" },
+    { "name": "Questionnaires", "description": "Questionnaire management" },
+    { "name": "Lookups", "description": "Lookup tags and assignments" },
+    { "name": "Comments", "description": "File/run comments" },
+    { "name": "Audit Logs", "description": "Activity audit logs" },
+    { "name": "Analytics", "description": "Score analytics and dashboards" },
+    { "name": "AI Analytics", "description": "AI-powered analytics and insights" },
+    { "name": "Chatbot", "description": "Analytics chatbot conversations" }
   ],
   "paths": {
-    "/plants": {
+    "/projects": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": ["Projects"],
+        "summary": "List projects",
+        "operationId": "listProjects",
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["name", "createdAt", "servicePartnerCount", "agentCount"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Projects list",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/ProjectListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Projects"],
+        "summary": "Create project",
+        "operationId": "createProject",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 255 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "tags": ["Projects"],
+        "summary": "Get project by ID",
+        "operationId": "getProject",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      },
+      "patch": {
+        "tags": ["Projects"],
+        "summary": "Update project",
+        "operationId": "updateProject",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 255 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      },
+      "delete": {
+        "tags": ["Projects"],
+        "summary": "Delete project",
+        "operationId": "deleteProject",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": {
+          "200": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      }
+    },
+    "/service-partners": {
+      "get": {
+        "tags": ["Service Partners"],
+        "summary": "List service partners",
+        "operationId": "listServicePartners",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "projectId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["name", "createdAt", "updatedAt"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      },
+      "post": {
+        "tags": ["Service Partners"],
+        "summary": "Create service partner",
+        "operationId": "createServicePartner",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["projectId", "name"],
+                "properties": {
+                  "projectId": { "type": "string", "format": "uuid" },
+                  "name": { "type": "string", "minLength": 1, "maxLength": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "$ref": "#/components/responses/SuccessResponse" }
+        }
+      }
+    },
+    "/service-partners/{id}": {
+      "get": {
+        "tags": ["Service Partners"],
+        "summary": "Get service partner by ID",
+        "operationId": "getServicePartner",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Service Partners"],
+        "summary": "Update service partner",
+        "operationId": "updateServicePartner",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Service Partners"],
+        "summary": "Delete service partner",
+        "operationId": "deleteServicePartner",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/teams": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "List teams",
+        "operationId": "listTeams",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "projectId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "servicePartnerId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["name", "createdAt", "updatedAt"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Teams"],
+        "summary": "Create team",
+        "operationId": "createTeam",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["projectId", "servicePartnerId", "name"],
+                "properties": {
+                  "projectId": { "type": "string", "format": "uuid" },
+                  "servicePartnerId": { "type": "string", "format": "uuid" },
+                  "name": { "type": "string", "minLength": 1, "maxLength": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "Get team by ID",
+        "operationId": "getTeam",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Teams"],
+        "summary": "Update team",
+        "operationId": "updateTeam",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 100 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Teams"],
+        "summary": "Delete team",
+        "operationId": "deleteTeam",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/agents": {
+      "get": {
+        "tags": ["Agents"],
+        "summary": "List agents",
+        "operationId": "listAgents",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "teamId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "servicePartnerId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "projectId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "isActive", "in": "query", "schema": { "type": "string", "enum": ["true", "false"] } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["fullName", "createdAt", "updatedAt"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Agents"],
+        "summary": "Create agent",
+        "operationId": "createAgent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fullName", "aliasName", "teamId"],
+                "properties": {
+                  "fullName": { "type": "string", "minLength": 1, "maxLength": 200 },
+                  "aliasName": { "type": "string", "minLength": 1, "maxLength": 200 },
+                  "email": { "type": "string", "format": "email" },
+                  "teamId": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/agents/{id}": {
+      "get": {
+        "tags": ["Agents"],
+        "summary": "Get agent by ID",
+        "operationId": "getAgent",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Agents"],
+        "summary": "Update agent",
+        "operationId": "updateAgent",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": { "type": "string", "minLength": 1, "maxLength": 200 },
+                  "aliasName": { "type": "string", "minLength": 1, "maxLength": 200 },
+                  "email": { "type": "string", "format": "email", "nullable": true },
+                  "isActive": { "type": "boolean" },
+                  "teamId": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Agents"],
+        "summary": "Delete agent",
+        "operationId": "deleteAgent",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "List campaigns",
+        "operationId": "listCampaigns",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["active", "paused", "archived"] } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["name", "status", "createdAt", "updatedAt", "startDate"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "Create campaign",
+        "operationId": "createCampaign",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCampaignBody" }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/campaigns/{id}": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "Get campaign by ID",
+        "operationId": "getCampaign",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Campaigns"],
+        "summary": "Update campaign",
+        "operationId": "updateCampaign",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCampaignBody" }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Campaigns"],
+        "summary": "Delete campaign",
+        "operationId": "deleteCampaign",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/campaigns/{id}/agents": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "Get agents assigned to campaign",
+        "operationId": "getCampaignAgents",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/processing-jobs": {
+      "get": {
+        "tags": ["Processing Jobs"],
+        "summary": "List processing jobs",
+        "operationId": "listProcessingJobs",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["pending", "processing", "completed", "failed"] } },
+          { "name": "evaluationType", "in": "query", "schema": { "type": "string", "enum": ["ai", "human"] } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Processing Jobs"],
+        "summary": "Create processing job",
+        "operationId": "createProcessingJob",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateProcessingJobBody" }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/processing-jobs/{id}": {
+      "get": {
+        "tags": ["Processing Jobs"],
+        "summary": "Get processing job details with runs",
+        "operationId": "getProcessingJob",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/processing-jobs/{id}/status": {
+      "patch": {
+        "tags": ["Processing Jobs"],
+        "summary": "Update processing job status",
+        "operationId": "updateProcessingJobStatus",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["pending", "processing", "completed", "failed", "cancelled"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/processing-jobs/{id}/retry": {
+      "post": {
+        "tags": ["Processing Jobs"],
+        "summary": "Retry failed/queued runs in a job",
+        "operationId": "retryProcessingJob",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/runs": {
+      "get": {
+        "tags": ["Processing Runs"],
+        "summary": "List processing runs (dashboard)",
+        "operationId": "listRuns",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["queued", "transcribing", "anonymizing", "evaluating", "completed", "failed"] } },
+          { "name": "campaignId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "agentId", "in": "query", "schema": { "type": "string", "format": "uuid" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/runs/{runId}/analysis": {
+      "get": {
+        "tags": ["Processing Runs"],
+        "summary": "Get run analysis (transcript, evaluation, questionnaire)",
+        "operationId": "getRunAnalysis",
+        "parameters": [{ "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/runs/{runId}/evaluate": {
+      "post": {
+        "tags": ["Processing Runs"],
+        "summary": "Submit manual evaluation for a run",
+        "operationId": "submitEvaluation",
+        "parameters": [{ "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["answers"],
+                "properties": {
+                  "answers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["questionId", "answer"],
+                      "properties": {
+                        "questionId": { "type": "string" },
+                        "answer": {},
+                        "comments": { "type": "string" }
+                      }
+                    }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+    "/runs/{runId}/reprocess": {
+      "post": {
+        "tags": ["Processing Runs"],
+        "summary": "Reprocess a run (create new run from existing)",
+        "operationId": "reprocessRun",
+        "parameters": [{ "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reuseTranscript": { "type": "boolean", "default": false }
                 }
               }
             }
           }
-        }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
+    },
+    "/runs/{runId}/speaker-labels": {
+      "patch": {
+        "tags": ["Processing Runs"],
+        "summary": "Update speaker labels for a run",
+        "operationId": "updateSpeakerLabels",
+        "parameters": [{ "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "required": ["labelUpdates"],
+                "properties": {
+                  "labelUpdates": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Map of speaker_id to label" }
+                }
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/runs/{runId}/comments": {
+      "get": {
+        "tags": ["Comments"],
+        "summary": "List comments for a run",
+        "operationId": "listRunComments",
+        "parameters": [
+          { "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "minimum": 1, "maximum": 100 } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Comments"],
+        "summary": "Add comment to a run",
+        "operationId": "addRunComment",
+        "parameters": [{ "name": "runId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": { "type": "string", "minLength": 1, "maxLength": 5000 },
+                  "parentCommentId": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
           }
-        }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/comments/{id}": {
+      "patch": {
+        "tags": ["Comments"],
+        "summary": "Update a comment",
+        "operationId": "updateComment",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": { "type": "string", "minLength": 1, "maxLength": 5000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Comments"],
+        "summary": "Delete a comment",
+        "operationId": "deleteComment",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/files/{fileId}/history": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get all processing runs for a file",
+        "operationId": "getFileHistory",
+        "parameters": [{ "name": "fileId", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/evaluations/{id}": {
+      "get": {
+        "tags": ["Evaluations"],
+        "summary": "Get evaluation by ID",
+        "operationId": "getEvaluation",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/evaluations/{id}/answers": {
+      "patch": {
+        "tags": ["Evaluations"],
+        "summary": "Update evaluation answers and recalculate scores",
+        "operationId": "updateEvaluationAnswers",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["answers"],
+                "properties": {
+                  "answers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["questionId", "answer"],
+                      "properties": {
+                        "questionId": { "type": "string", "format": "uuid" },
+                        "answer": {},
+                        "comments": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/evaluations/{id}/exclude-analytics": {
+      "patch": {
+        "tags": ["Evaluations"],
+        "summary": "Exclude or re-include evaluation from analytics",
+        "operationId": "excludeFromAnalytics",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["excluded"],
+                "properties": {
+                  "excluded": { "type": "boolean", "description": "true to exclude, false to re-include" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/batch-processing/patterns": {
+      "get": {
+        "tags": ["Batch Processing"],
+        "summary": "Get available filename patterns",
+        "operationId": "getPatterns",
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/batch-processing/parse": {
+      "post": {
+        "tags": ["Batch Processing"],
+        "summary": "Parse filenames and resolve agents/campaigns",
+        "operationId": "batchParse",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fileIds", "patternId"],
+                "properties": {
+                  "fileIds": { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 500 },
+                  "patternId": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Browse files and folders at a path",
+        "operationId": "browseItems",
+        "parameters": [
+          { "name": "path", "in": "query", "schema": { "type": "string", "default": "" } },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 } },
+          { "name": "projectId", "in": "query", "schema": { "type": "string" } },
+          { "name": "servicePartnerId", "in": "query", "schema": { "type": "string" } },
+          { "name": "teamId", "in": "query", "schema": { "type": "string" } },
+          { "name": "agentId", "in": "query", "schema": { "type": "string" } },
+          { "name": "campaignId", "in": "query", "schema": { "type": "string" } },
+          { "name": "fileCategory", "in": "query", "schema": { "type": "string", "enum": ["audio", "video", "document", "image", "archive", "other"] } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/search": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Search files",
+        "operationId": "searchFiles",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "schema": { "type": "string", "minLength": 1, "maxLength": 255 } },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 } },
+          { "name": "fileCategory", "in": "query", "schema": { "type": "string", "enum": ["audio", "video", "document", "image", "archive", "other"] } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/tree": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get folder tree structure",
+        "operationId": "getTree",
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/upload": {
+      "post": {
+        "tags": ["Files"],
+        "summary": "Upload a file",
+        "operationId": "uploadFile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": { "type": "string", "format": "binary" },
+                  "projectId": { "type": "string" },
+                  "servicePartnerId": { "type": "string" },
+                  "teamId": { "type": "string" },
+                  "agentId": { "type": "string" },
+                  "campaignId": { "type": "string" },
+                  "folderPath": { "type": "string", "default": "" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/folder": {
+      "post": {
+        "tags": ["Files"],
+        "summary": "Create a folder",
+        "operationId": "createFolder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "path": { "type": "string", "default": "" },
+                  "name": { "type": "string", "minLength": 1, "maxLength": 255 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Files"],
+        "summary": "Delete a folder",
+        "operationId": "deleteFolder",
+        "parameters": [{ "name": "path", "in": "query", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/{id}": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get file details by ID",
+        "operationId": "getFileItem",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Files"],
+        "summary": "Delete file permanently",
+        "operationId": "deleteFileItem",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/file-manager/{id}/download": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get file download URL",
+        "operationId": "getFileDownloadUrl",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/stats": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get storage statistics",
+        "operationId": "getStorageStats",
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections": {
+      "get": {
+        "tags": ["Storage Connections"],
+        "summary": "List storage connections",
+        "operationId": "listStorageConnections",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "type", "in": "query", "schema": { "$ref": "#/components/schemas/ConnectionType" } },
+          { "name": "isActive", "in": "query", "schema": { "type": "boolean" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Storage Connections"],
+        "summary": "Create storage connection",
+        "operationId": "createStorageConnection",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateStorageConnectionBody" }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections/test": {
+      "post": {
+        "tags": ["Storage Connections"],
+        "summary": "Test a new connection before creating",
+        "operationId": "testNewConnection",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "credentials"],
+                "properties": {
+                  "type": { "$ref": "#/components/schemas/ConnectionType" },
+                  "credentials": { "type": "object", "additionalProperties": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections/{id}": {
+      "get": {
+        "tags": ["Storage Connections"],
+        "summary": "Get storage connection by ID",
+        "operationId": "getStorageConnection",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Storage Connections"],
+        "summary": "Update storage connection",
+        "operationId": "updateStorageConnection",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateStorageConnectionBody" }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Storage Connections"],
+        "summary": "Delete storage connection",
+        "operationId": "deleteStorageConnection",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections/{id}/test": {
+      "post": {
+        "tags": ["Storage Connections"],
+        "summary": "Test existing connection",
+        "operationId": "testStorageConnection",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections/{id}/sync": {
+      "post": {
+        "tags": ["Storage Connections"],
+        "summary": "Trigger manual sync",
+        "operationId": "triggerSync",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourcePath": { "type": "string" },
+                  "fullSync": { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/connections/{id}/sync-status": {
+      "get": {
+        "tags": ["Storage Connections"],
+        "summary": "Get sync status",
+        "operationId": "getSyncStatus",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/storage-sync-logs": {
+      "get": {
+        "tags": ["Sync Logs"],
+        "summary": "List sync logs",
+        "operationId": "listSyncLogs",
+        "parameters": [{ "$ref": "#/components/parameters/PageParam" }, { "$ref": "#/components/parameters/LimitParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/storage-sync-logs/{id}": {
+      "get": {
+        "tags": ["Sync Logs"],
+        "summary": "Get sync log by ID",
+        "operationId": "getSyncLog",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/storage/storage-sync-logs/{id}/files": {
+      "get": {
+        "tags": ["Sync Logs"],
+        "summary": "Get file processing details for sync log",
+        "operationId": "getSyncLogFiles",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questions": {
+      "get": {
+        "tags": ["Questions"],
+        "summary": "List question templates",
+        "operationId": "listQuestions",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["boolean", "rating", "numeric", "singleSelect", "multiSelect", "text", "date"] } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["label", "type", "code", "createdAt", "updatedAt"], "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Questions"],
+        "summary": "Create question template",
+        "operationId": "createQuestion",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateQuestionBody" }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questions/{id}": {
+      "get": {
+        "tags": ["Questions"],
+        "summary": "Get question template by ID",
+        "operationId": "getQuestion",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Questions"],
+        "summary": "Update question template",
+        "operationId": "updateQuestion",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateQuestionBody" } } }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Questions"],
+        "summary": "Delete question template",
+        "operationId": "deleteQuestion",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questionnaires": {
+      "get": {
+        "tags": ["Questionnaires"],
+        "summary": "List questionnaires",
+        "operationId": "listQuestionnaires",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "name", "in": "query", "schema": { "type": "string" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Questionnaires"],
+        "summary": "Create questionnaire",
+        "operationId": "createQuestionnaire",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateQuestionnaireBody" }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questionnaires/{id}": {
+      "get": {
+        "tags": ["Questionnaires"],
+        "summary": "Get questionnaire by ID",
+        "operationId": "getQuestionnaire",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "patch": {
+        "tags": ["Questionnaires"],
+        "summary": "Update questionnaire (creates new version)",
+        "operationId": "updateQuestionnaire",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateQuestionnaireBody" } } }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Questionnaires"],
+        "summary": "Delete questionnaire",
+        "operationId": "deleteQuestionnaire",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questionnaires/{id}/versions": {
+      "get": {
+        "tags": ["Questionnaires"],
+        "summary": "Get all versions of a questionnaire",
+        "operationId": "getQuestionnaireVersions",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/questionnaires/{id}/restore": {
+      "post": {
+        "tags": ["Questionnaires"],
+        "summary": "Restore a previous version",
+        "operationId": "restoreQuestionnaireVersion",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["version"],
+                "properties": { "version": { "type": "integer", "minimum": 1 } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/audit-logs": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "List audit logs with filters",
+        "operationId": "listAuditLogs",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/LimitParam" },
+          { "name": "type", "in": "query", "schema": { "type": "string", "enum": ["user_action", "system_event", "auth", "security", "admin"] } },
+          { "name": "severity", "in": "query", "schema": { "type": "string", "enum": ["low", "medium", "high", "critical"] } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["success", "failure", "pending"] } },
+          { "name": "startDate", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "endDate", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "userId", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/audit-logs/stats": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "Get audit log statistics",
+        "operationId": "getAuditStats",
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/audit-logs/export": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "Export audit logs",
+        "operationId": "exportAuditLogs",
+        "parameters": [
+          { "name": "format", "in": "query", "schema": { "type": "string", "enum": ["csv", "json"], "default": "json" } },
+          { "name": "startDate", "in": "query", "schema": { "type": "string", "format": "date-time" } },
+          { "name": "endDate", "in": "query", "schema": { "type": "string", "format": "date-time" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/audit-logs/{id}": {
+      "get": {
+        "tags": ["Audit Logs"],
+        "summary": "Get audit log by ID",
+        "operationId": "getAuditLog",
+        "parameters": [{ "$ref": "#/components/parameters/IdParam" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/overview": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Overview dashboard",
+        "operationId": "getOverviewDashboard",
+        "parameters": [{ "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }, { "$ref": "#/components/parameters/AnalyticsFilters" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/agents/{agentId}": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Agent scorecard",
+        "operationId": "getAgentScorecard",
+        "parameters": [{ "name": "agentId", "in": "path", "required": true, "schema": { "type": "string" } }, { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/compare": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Hierarchy comparison",
+        "operationId": "getHierarchyComparison",
+        "parameters": [
+          { "name": "groupBy", "in": "query", "required": true, "schema": { "type": "string", "enum": ["project", "servicePartner", "team", "campaign"] } },
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/blocks": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Block-level analytics",
+        "operationId": "getBlockAnalytics",
+        "parameters": [
+          { "name": "questionnaireId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/leaderboard": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Agent leaderboard",
+        "operationId": "getLeaderboard",
+        "parameters": [
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 20, "minimum": 1, "maximum": 100 } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["avgScore", "totalEvaluations", "improvementRate"], "default": "avgScore" } },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/trends": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Score trends over time",
+        "operationId": "getScoreTrend",
+        "parameters": [
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" },
+          { "name": "interval", "in": "query", "schema": { "type": "string", "enum": ["day", "week", "month"], "default": "week" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/agents/{agentId}/communication": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Agent communication analytics",
+        "operationId": "getCommunicationAnalytics",
+        "parameters": [{ "name": "agentId", "in": "path", "required": true, "schema": { "type": "string" } }, { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/calibration": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "AI vs Human calibration",
+        "operationId": "getCalibration",
+        "parameters": [{ "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/agents/{agentId}/consistency": {
+      "get": {
+        "tags": ["Analytics"],
+        "summary": "Agent score consistency",
+        "operationId": "getScoreConsistency",
+        "parameters": [{ "name": "agentId", "in": "path", "required": true, "schema": { "type": "string" } }, { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/ai/agents/{agentId}/profile": {
+      "get": {
+        "tags": ["AI Analytics"],
+        "summary": "Agent AI profile with competency scores",
+        "operationId": "getAgentAiProfile",
+        "parameters": [
+          { "name": "agentId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "minimum": 1, "maximum": 100 } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/ai/agents/{agentId}/improvement": {
+      "get": {
+        "tags": ["AI Analytics"],
+        "summary": "Agent improvement tracking over time",
+        "operationId": "getImprovementTracking",
+        "parameters": [
+          { "name": "agentId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" },
+          { "name": "interval", "in": "query", "schema": { "type": "string", "enum": ["day", "week", "month"], "default": "week" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/ai/insights": {
+      "get": {
+        "tags": ["AI Analytics"],
+        "summary": "Team/org insight report",
+        "operationId": "getInsightReport",
+        "parameters": [
+          { "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" },
+          { "name": "groupBy", "in": "query", "schema": { "type": "string", "enum": ["team", "servicePartner", "project"], "default": "team" } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/ai/summary": {
+      "get": {
+        "tags": ["AI Analytics"],
+        "summary": "AI summary report",
+        "operationId": "getAiSummaryReport",
+        "parameters": [{ "$ref": "#/components/parameters/DateRangeFrom" }, { "$ref": "#/components/parameters/DateRangeTo" }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/chat/conversations": {
+      "get": {
+        "tags": ["Chatbot"],
+        "summary": "List chatbot conversations",
+        "operationId": "listConversations",
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 50, "minimum": 1, "maximum": 100 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0, "minimum": 0 } }
+        ],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "post": {
+        "tags": ["Chatbot"],
+        "summary": "Create a new chatbot conversation",
+        "operationId": "createConversation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string", "maxLength": 200 } }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/chat/conversations/{conversationId}": {
+      "get": {
+        "tags": ["Chatbot"],
+        "summary": "Get conversation with messages",
+        "operationId": "getConversation",
+        "parameters": [{ "name": "conversationId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      },
+      "delete": {
+        "tags": ["Chatbot"],
+        "summary": "Delete conversation",
+        "operationId": "deleteConversation",
+        "parameters": [{ "name": "conversationId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
+      }
+    },
+    "/analytics/chat/conversations/{conversationId}/messages": {
+      "post": {
+        "tags": ["Chatbot"],
+        "summary": "Send message to chatbot",
+        "operationId": "sendMessage",
+        "parameters": [{ "name": "conversationId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["message"],
+                "properties": { "message": { "type": "string", "minLength": 1, "maxLength": 2000 } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "$ref": "#/components/responses/SuccessResponse" } }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Organization-scoped API key. Format: `ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` (44 characters total)"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT access token from login endpoint"
+      }
+    },
+    "parameters": {
+      "IdParam": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "schema": { "type": "integer", "default": 1, "minimum": 1 }
+      },
+      "LimitParam": {
+        "name": "limit",
+        "in": "query",
+        "schema": { "type": "integer", "default": 10, "minimum": 1, "maximum": 100 }
+      },
+      "DateRangeFrom": {
+        "name": "from",
+        "in": "query",
+        "description": "Start date (ISO 8601)",
+        "schema": { "type": "string", "format": "date-time" }
+      },
+      "DateRangeTo": {
+        "name": "to",
+        "in": "query",
+        "description": "End date (ISO 8601)",
+        "schema": { "type": "string", "format": "date-time" }
+      },
+      "AnalyticsFilters": {
+        "name": "projectId",
+        "in": "query",
+        "schema": { "type": "string" },
+        "description": "Also supports: servicePartnerId, teamId, campaignId, questionnaireId, evaluationType as query params"
+      }
+    },
+    "responses": {
+      "SuccessResponse": {
+        "description": "Successful operation",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ApiResponse" }
           }
         }
+      }
+    },
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": { "type": "integer" },
+          "data": { "type": "object" },
+          "message": { "type": "string" },
+          "success": { "type": "boolean" }
+        }
       },
-      "NewPlant": {
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer" },
+          "limit": { "type": "integer" },
+          "total": { "type": "integer" },
+          "totalPages": { "type": "integer" },
+          "hasNextPage": { "type": "boolean" },
+          "hasPrevPage": { "type": "boolean" }
+        }
+      },
+      "ResourceRef": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true }
+        }
+      },
+      "AuditMeta": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "displayName": { "type": "string" }
+        }
+      },
+      "ProjectListResponse": {
         "allOf": [
+          { "$ref": "#/components/schemas/ApiResponse" },
           {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+              "data": {
+                "type": "object",
+                "properties": {
+                  "projects": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/ProjectListItem" }
+                  },
+                  "pagination": { "$ref": "#/components/schemas/Pagination" }
+                }
               }
             }
           }
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "ProjectListItem": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "projectKey": { "type": "string" },
+          "servicePartnerCount": { "type": "integer" },
+          "agentCount": { "type": "integer" },
+          "teamCount": { "type": "integer" },
+          "campaignCount": { "type": "integer" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "createdBy": { "$ref": "#/components/schemas/AuditMeta" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "updatedBy": { "$ref": "#/components/schemas/AuditMeta" }
+        }
+      },
+      "CreateCampaignBody": {
+        "type": "object",
+        "required": ["name", "questionnaireId"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "questionnaireId": { "type": "string", "format": "uuid" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["active", "paused", "archived"], "default": "active" },
+          "targets": {
+            "type": "array",
+            "default": [],
+            "items": { "$ref": "#/components/schemas/CampaignTarget" }
           }
         }
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      },
+      "UpdateCampaignBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "questionnaireId": { "type": "string", "format": "uuid" },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["active", "paused", "archived"] },
+          "targets": { "type": "array", "items": { "$ref": "#/components/schemas/CampaignTarget" } }
+        }
+      },
+      "CampaignTarget": {
+        "type": "object",
+        "required": ["level"],
+        "properties": {
+          "level": { "type": "string", "enum": ["project", "servicePartner", "team", "agent"] },
+          "projectId": { "type": "string", "format": "uuid" },
+          "servicePartnerId": { "type": "string", "format": "uuid" },
+          "teamId": { "type": "string", "format": "uuid" },
+          "userId": { "type": "string", "format": "uuid" }
+        }
+      },
+      "CreateProcessingJobBody": {
+        "type": "object",
+        "required": ["evaluationType", "items"],
+        "properties": {
+          "evaluationType": { "type": "string", "enum": ["ai", "human"] },
+          "anonymizationEnabled": { "type": "boolean", "default": false },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["agentId"],
+              "properties": {
+                "fileId": { "type": "string", "format": "uuid" },
+                "agentId": { "type": "string", "format": "uuid" },
+                "language": { "type": "string", "minLength": 2, "maxLength": 10 },
+                "speakerLabels": { "type": "object", "additionalProperties": { "type": "string" } }
+              }
+            }
+          }
+        }
+      },
+      "CreateQuestionBody": {
+        "type": "object",
+        "required": ["code", "type", "label"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1, "maxLength": 50 },
+          "type": { "type": "string", "enum": ["boolean", "rating", "numeric", "singleSelect", "multiSelect", "text", "date"] },
+          "label": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "helpText": { "type": "string", "maxLength": 1000 },
+          "prompt": { "type": "string", "maxLength": 5000 },
+          "settings": { "type": "object", "description": "Type-specific settings (e.g. scaleMin/scaleMax for rating)" },
+          "defaultWeights": {
+            "type": "object",
+            "properties": {
+              "positive": { "type": "number", "minimum": 0 },
+              "negative": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      },
+      "CreateQuestionnaireBody": {
+        "type": "object",
+        "required": ["name", "blocks"],
+        "properties": {
+          "name": { "type": "string" },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["position", "tooltip", "questions"],
+              "properties": {
+                "position": { "type": "integer", "minimum": 1 },
+                "name": { "type": "string", "maxLength": 200 },
+                "tooltip": { "type": "string", "maxLength": 500 },
+                "maxScore": { "type": "number", "minimum": 0 },
+                "questions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["questionId", "templateCode", "type", "label"],
+                    "properties": {
+                      "questionId": { "type": "string" },
+                      "templateCode": { "type": "string" },
+                      "type": { "type": "string", "enum": ["boolean", "rating", "numeric", "singleSelect", "multiSelect", "text", "date"] },
+                      "label": { "type": "string", "minLength": 1, "maxLength": 500 },
+                      "helpText": { "type": "string" },
+                      "prompt": { "type": "string", "maxLength": 5000 },
+                      "settings": { "type": "object" },
+                      "weights": { "type": "object" },
+                      "required": { "type": "boolean", "default": false },
+                      "isKnockout": { "type": "boolean", "default": false }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ConnectionType": {
+        "type": "string",
+        "enum": ["ftp", "sftp", "ftps", "aws-s3", "azure-blob", "google-cloud", "nextcloud", "owncloud", "dropbox", "onedrive", "box", "webdav", "smb", "nfs", "minio"]
+      },
+      "NamingPattern": {
+        "type": "string",
+        "enum": ["full-hierarchy", "service-partner-hierarchy", "campaign-assignment", "agent-team", "agent-id", "agent-name", "team-agent", "folder-hierarchy", "campaign-id", "campaign-customer", "quality-monitoring", "training-session", "coaching-session", "date-folder-hierarchy", "shift-based", "service-partner-id", "location-based", "legacy-system-import", "batch-import", "custom"]
+      },
+      "CreateStorageConnectionBody": {
+        "type": "object",
+        "required": ["name", "type", "namingConventionPattern", "credentials"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "type": { "$ref": "#/components/schemas/ConnectionType" },
+          "isActive": { "type": "boolean", "default": true },
+          "autoSync": { "type": "boolean", "default": false },
+          "syncIntervalMinutes": { "type": "integer", "minimum": 1, "maximum": 10080 },
+          "namingConventionPattern": { "$ref": "#/components/schemas/NamingPattern" },
+          "customPattern": { "type": "string" },
+          "credentials": { "type": "object", "additionalProperties": { "type": "string" } }
+        }
+      },
+      "UpdateStorageConnectionBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 255 },
+          "isActive": { "type": "boolean" },
+          "autoSync": { "type": "boolean" },
+          "syncIntervalMinutes": { "type": "integer", "minimum": 1, "maximum": 10080 },
+          "namingConventionPattern": { "$ref": "#/components/schemas/NamingPattern" },
+          "customPattern": { "type": "string" },
+          "credentials": { "type": "object", "additionalProperties": { "type": "string" } }
+        }
       }
     }
   }

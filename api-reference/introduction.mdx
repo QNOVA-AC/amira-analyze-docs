@@ -1,33 +1,135 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Overview"
+description: "Authentication, response format, pagination, and core concepts"
+icon: "book"
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Base URL
 
-## Welcome
+All API requests are made to:
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://api.staging.insightflow.studio
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+Every request must include one of the following headers:
+
+<Tabs>
+  <Tab title="API Key">
+    Include your organization-scoped API key in the `X-API-Key` header.
+
+    ```bash
+    curl https://api.staging.insightflow.studio/projects \
+      -H "X-API-Key: ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    ```
+
+    API keys provide full organization-level access. The key format is 44 characters: `ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`.
+  </Tab>
+  <Tab title="Bearer Token">
+    Include a JWT access token in the `Authorization` header.
+
+    ```bash
+    curl https://api.staging.insightflow.studio/projects \
+      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
+    ```
+
+    JWT tokens are obtained from the login endpoint and are user-scoped.
+  </Tab>
+</Tabs>
+
+## Response Format
+
+All responses use a standard envelope:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Success",
+  "data": { ... }
+}
 ```
+
+On errors, the response includes an error message:
+
+```json
+{
+  "statusCode": 400,
+  "success": false,
+  "message": "Validation failed",
+  "data": null
+}
+```
+
+## Pagination
+
+List endpoints return paginated results. Use `page` and `limit` query parameters to control the window.
+
+| Parameter | Type | Default | Range | Description |
+|-----------|------|---------|-------|-------------|
+| `page` | integer | 1 | 1+ | Page number |
+| `limit` | integer | 10 | 1–100 | Items per page |
+
+Every paginated response includes:
+
+```json
+{
+  "data": {
+    "items": [ ... ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 42,
+      "totalPages": 5,
+      "hasNextPage": true,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+
+## Sorting
+
+Most list endpoints support `sortBy` and `sortOrder` query parameters. Available sort fields vary by resource — check each endpoint for details.
+
+```
+GET /projects?sortBy=createdAt&sortOrder=desc
+```
+
+## Entity Hierarchy
+
+InsightFlow organizes data in a strict hierarchy. Every entity belongs to the level above it.
+
+```
+Organization (scoped by API key)
+  └── Project
+        └── Service Partner
+              └── Team
+                    └── Agent
+```
+
+**Campaigns** sit alongside this hierarchy — they target specific levels (project, service partner, team, or agent) and reference a **Questionnaire** for evaluation criteria.
+
+## Processing Pipeline
+
+The evaluation workflow follows this sequence:
+
+<Steps>
+  <Step title="Upload files">
+    Upload audio/video recordings via the Files API or sync from external storage connections (FTP, S3, Azure, etc.).
+  </Step>
+  <Step title="Create a processing job">
+    Submit a job specifying the evaluation type (`ai` or `human`), files, and assigned agents.
+  </Step>
+  <Step title="Monitor processing runs">
+    Each file becomes a run that progresses through: `queued` → `transcribing` → `anonymizing` → `evaluating` → `completed`.
+  </Step>
+  <Step title="Review evaluations">
+    View AI-generated or human-submitted answers with calculated scores. Update answers or exclude from analytics as needed.
+  </Step>
+  <Step title="Analyze results">
+    Use Analytics and AI Analytics endpoints for dashboards, leaderboards, trends, calibration, and AI-powered insights.
+  </Step>
+</Steps>
