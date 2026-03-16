@@ -2,15 +2,15 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
   "name": "InsightFlow",
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "colors": {
     "primary": "#6366F1",
     "light": "#818CF8",
     "dark": "#4F46E5"
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "https://insightflow-prod-assets.s3.eu-central-1.amazonaws.com/insightflow-logo.png",
+    "dark": "https://insightflow-prod-assets.s3.eu-central-1.amazonaws.com/insightflow-logo.png"
   },
   "font": {
     "heading": "Inter",
