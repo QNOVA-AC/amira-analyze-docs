@@ -1,101 +1,155 @@
 ---
 title: "InsightFlow API"
-description: "Build powerful quality assurance workflows with the InsightFlow Public API"
-icon: "house"
+description: "Integrate quality assurance, analytics, and AI-powered insights into your workflows"
 ---
 
 <Note>
-  **Base URL** &nbsp; `https://api.staging.insightflow.studio` &nbsp;&nbsp;|&nbsp;&nbsp; **Version** &nbsp; `1.0.0` &nbsp;&nbsp;|&nbsp;&nbsp; **Auth** &nbsp; API Key or Bearer JWT
+  **Base URL** &nbsp; `https://api.insightflow.studio` &nbsp;&nbsp;|&nbsp;&nbsp; **Version** &nbsp; `1.0.0` &nbsp;&nbsp;|&nbsp;&nbsp; **OpenAPI 3.0.3**
 </Note>
 
-Get started quickly or dive into the full reference.
-
-<CardGroup cols={3}>
-  <Card title="Quick Start" icon="bolt" href="/api-reference/quickstart">
-    First API call in under a minute
+<Columns cols={3}>
+  <Card title="Quick Start" icon="bolt" color="#6366F1" href="/api-reference/quickstart">
+    Make your first API call in under a minute with code examples in cURL, JavaScript, and Python.
   </Card>
-  <Card title="API Overview" icon="book" href="/api-reference/introduction">
-    Auth, pagination, and core concepts
+  <Card title="API Overview" icon="book-open" color="#6366F1" href="/api-reference/introduction">
+    Authentication, response format, pagination, sorting, and entity hierarchy.
   </Card>
-  <Card title="Error Handling" icon="triangle-exclamation" href="/api-reference/errors">
-    Status codes and error responses
+  <Card title="Error Handling" icon="triangle-exclamation" color="#6366F1" href="/api-reference/errors">
+    HTTP status codes, error response format, and common error scenarios.
   </Card>
-</CardGroup>
+</Columns>
 
 ---
 
-## Organization
+## Hierarchy & Structure
 
-Set up your hierarchy before processing files.
+Set up your organizational structure. Entities follow a strict hierarchy: **Project > Service Partner > Team > Agent**.
 
-<CardGroup cols={4}>
+<Columns cols={3}>
   <Card title="Projects" icon="folder-open" href="/api-reference/projects/list">
-    Top-level containers
+    Top-level containers for grouping service partners and teams.
   </Card>
   <Card title="Service Partners" icon="building" href="/api-reference/service-partners/list">
-    Partner organizations
+    Partner organizations with data protection settings.
   </Card>
   <Card title="Teams" icon="users" href="/api-reference/teams/list">
-    Agent groups
+    Groups of agents within a service partner.
   </Card>
+</Columns>
+
+<Columns cols={2}>
   <Card title="Agents" icon="user" href="/api-reference/agents/list">
-    Evaluated individuals
+    Individuals being evaluated. Supports bulk XLSX import.
   </Card>
-</CardGroup>
+  <Card title="Campaigns" icon="bullseye" href="/api-reference/campaigns/list">
+    Target agents at any hierarchy level with a questionnaire.
+  </Card>
+</Columns>
+
+---
 
 ## Evaluation Workflow
 
-Process recordings and generate quality scores.
+Process audio recordings through AI or human evaluation pipelines. Track progress from upload through scoring.
 
-<CardGroup cols={4}>
-  <Card title="Campaigns" icon="bullseye" href="/api-reference/campaigns/list">
-    Evaluation campaigns
-  </Card>
+<Columns cols={2}>
   <Card title="Processing Jobs" icon="microchip" href="/api-reference/processing-jobs/list">
-    AI or human evaluation
+    Create evaluation jobs specifying AI or human mode, campaign, and file-agent assignments. Retry failed runs.
   </Card>
   <Card title="Processing Runs" icon="rotate" href="/api-reference/processing-runs/list">
-    Track run progress
+    Track individual runs through queued, transcribing, anonymizing, evaluating, and completed stages.
   </Card>
+</Columns>
+
+<Columns cols={2}>
   <Card title="Evaluations" icon="clipboard-check" href="/api-reference/evaluations/get">
-    Scores and answers
+    View and update scored answers. Toggle analytics exclusion per evaluation.
   </Card>
-</CardGroup>
+  <Card title="Batch Processing" icon="layer-group" href="/api-reference/batch-processing/get-patterns">
+    Parse filenames using configurable naming convention patterns.
+  </Card>
+</Columns>
 
-## Content & Storage
+---
 
-Manage evaluation criteria and file storage.
+## Content & Templates
 
-<CardGroup cols={4}>
+Define evaluation criteria with questions, blocks, and versioned questionnaires.
+
+<Columns cols={3}>
   <Card title="Questions" icon="circle-question" href="/api-reference/questions/list">
-    Question templates
+    Templates with configurable answer types: boolean, rating, numeric, select, text, date.
   </Card>
   <Card title="Questionnaires" icon="list-check" href="/api-reference/questionnaires/list">
-    Versioned eval forms
+    Versioned evaluation forms assembled from blocks and questions. Supports restore.
   </Card>
-  <Card title="Files" icon="file-audio" href="/api-reference/files/browse">
-    Audio/video files
+  <Card title="Blocks" icon="cubes" href="/api-reference/blocks/list">
+    Reusable grouping containers for organizing questions within questionnaires.
   </Card>
-  <Card title="Storage" icon="plug" href="/api-reference/storage-connections/list">
-    External connections
+</Columns>
+
+<Columns cols={2}>
+  <Card title="Lookups" icon="tags" href="/api-reference/lookups/list">
+    Custom tag and assignment system with multi-select support. Assign tags to files, agents, campaigns, and more.
   </Card>
-</CardGroup>
+  <Card title="Comments" icon="comments" href="/api-reference/comments/list">
+    Threaded comments on processing runs for team collaboration and review notes.
+  </Card>
+</Columns>
 
-## Intelligence & Admin
+---
 
-Dashboards, AI insights, and operational tools.
+## File Management & Storage
 
-<CardGroup cols={4}>
+Upload, browse, and sync files from external storage providers.
+
+<Columns cols={3}>
+  <Card title="File Manager" icon="file-audio" href="/api-reference/files/browse">
+    Browse, upload, download, and manage audio, video, and document files.
+  </Card>
+  <Card title="Storage Connections" icon="plug" href="/api-reference/storage-connections/list">
+    Connect external sources — S3, SFTP, Azure Blob, GCS, Dropbox, OneDrive, and more.
+  </Card>
+  <Card title="Sync Logs" icon="clock-rotate-left" href="/api-reference/sync-logs/list">
+    Track file sync operations with per-file success, failure, and skip details.
+  </Card>
+</Columns>
+
+---
+
+## Analytics & Intelligence
+
+Dashboards, AI-powered insights, monitoring, and reporting across your quality data.
+
+<Columns cols={3}>
   <Card title="Analytics" icon="chart-mixed" href="/api-reference/analytics/overview">
-    Dashboards & trends
+    Overview dashboard, agent scorecards, leaderboard, trends, calibration, and hierarchy comparison.
   </Card>
   <Card title="AI Analytics" icon="brain" href="/api-reference/ai-analytics/agent-profile">
-    AI-powered insights
+    AI-generated agent profiles, competency tracking, coaching priorities, and org-wide insights.
   </Card>
-  <Card title="Chatbot" icon="message-bot" href="/api-reference/chatbot/list-conversations">
-    Conversational analytics
+  <Card title="Monitoring" icon="gauge-high" href="/api-reference/monitoring/quality-monitor">
+    Quality and question monitoring with time-bucketed pass rates and entity breakdowns.
+  </Card>
+</Columns>
+
+<Columns cols={3}>
+  <Card title="Benchmark" icon="ranking-star" href="/api-reference/benchmark/get">
+    Benchmark matrix comparing pass rates across agents, teams, and projects.
+  </Card>
+  <Card title="Management Report" icon="file-chart-column" href="/api-reference/management-report/get">
+    Aggregated KPIs, NPS, sentiment trends, and AI-generated status reports.
+  </Card>
+  <Card title="Evaluation Results" icon="table-list" href="/api-reference/evaluation-results/get">
+    Paginated evaluation results with sorting, filtering, and entity name resolution.
+  </Card>
+</Columns>
+
+<Columns cols={2}>
+  <Card title="AI Chatbot" icon="message-bot" href="/api-reference/chatbot/list-conversations">
+    Conversational analytics with multi-turn AI chat and tool-calling for data exploration.
   </Card>
   <Card title="Audit Logs" icon="scroll" href="/api-reference/audit-logs/list">
-    Activity tracking
+    Activity tracking with severity levels, user attribution, and CSV/JSON export.
   </Card>
-</CardGroup>
+</Columns>

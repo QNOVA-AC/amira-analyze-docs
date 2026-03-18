@@ -25,10 +25,10 @@
   },
   "openapi": ["/api-reference/openapi.json"],
   "api": {
-    "baseUrl": "https://api.staging.insightflow.studio",
+    "baseUrl": "https://api.insightflow.studio",
     "auth": {
       "method": "key",
-      "name": "X-API-Key"
+      "name": "X-Api-Key"
     },
     "playground": {
       "mode": "show"
@@ -90,7 +90,10 @@
               "api-reference/agents/create",
               "api-reference/agents/get",
               "api-reference/agents/update",
-              "api-reference/agents/delete"
+              "api-reference/agents/delete",
+              "api-reference/agents/import-template",
+              "api-reference/agents/import",
+              "api-reference/agents/import-confirm"
             ]
           },
           {
@@ -121,7 +124,8 @@
               "api-reference/processing-runs/get-analysis",
               "api-reference/processing-runs/submit-evaluation",
               "api-reference/processing-runs/reprocess",
-              "api-reference/processing-runs/update-speaker-labels"
+              "api-reference/processing-runs/update-speaker-labels",
+              "api-reference/files/history"
             ]
           },
           {
@@ -139,7 +143,8 @@
               "api-reference/questions/create",
               "api-reference/questions/get",
               "api-reference/questions/update",
-              "api-reference/questions/delete"
+              "api-reference/questions/delete",
+              "api-reference/questions/get-answer-types"
             ]
           },
           {
@@ -155,7 +160,33 @@
             ]
           },
           {
-            "group": "Files",
+            "group": "Blocks",
+            "pages": [
+              "api-reference/blocks/list",
+              "api-reference/blocks/create",
+              "api-reference/blocks/get",
+              "api-reference/blocks/update",
+              "api-reference/blocks/delete"
+            ]
+          },
+          {
+            "group": "Lookups",
+            "pages": [
+              "api-reference/lookups/list",
+              "api-reference/lookups/create",
+              "api-reference/lookups/get",
+              "api-reference/lookups/update",
+              "api-reference/lookups/delete",
+              "api-reference/lookups/get-options",
+              "api-reference/lookups/config",
+              "api-reference/lookups/stats",
+              "api-reference/lookups/get-resource-lookups",
+              "api-reference/lookups/sync-assignments",
+              "api-reference/lookups/get-tag-assignments"
+            ]
+          },
+          {
+            "group": "File Manager",
             "pages": [
               "api-reference/files/browse",
               "api-reference/files/search",
@@ -166,8 +197,7 @@
               "api-reference/files/get",
               "api-reference/files/delete",
               "api-reference/files/download",
-              "api-reference/files/stats",
-              "api-reference/files/history"
+              "api-reference/files/stats"
             ]
           },
           {
@@ -200,6 +230,24 @@
             ]
           },
           {
+            "group": "Comments",
+            "pages": [
+              "api-reference/comments/list",
+              "api-reference/comments/create",
+              "api-reference/comments/update",
+              "api-reference/comments/delete"
+            ]
+          },
+          {
+            "group": "Audit Logs",
+            "pages": [
+              "api-reference/audit-logs/list",
+              "api-reference/audit-logs/get",
+              "api-reference/audit-logs/stats",
+              "api-reference/audit-logs/export"
+            ]
+          },
+          {
             "group": "Analytics",
             "pages": [
               "api-reference/analytics/overview",
@@ -223,6 +271,34 @@
             ]
           },
           {
+            "group": "Monitoring",
+            "pages": [
+              "api-reference/monitoring/quality-monitor",
+              "api-reference/monitoring/question-monitor",
+              "api-reference/monitoring/analysis-chart",
+              "api-reference/monitoring/evaluation-overview"
+            ]
+          },
+          {
+            "group": "Benchmark",
+            "pages": [
+              "api-reference/benchmark/get"
+            ]
+          },
+          {
+            "group": "Evaluation Results",
+            "pages": [
+              "api-reference/evaluation-results/get"
+            ]
+          },
+          {
+            "group": "Management Report",
+            "pages": [
+              "api-reference/management-report/get",
+              "api-reference/management-report/generate-lagebericht"
+            ]
+          },
+          {
             "group": "Chatbot",
             "pages": [
               "api-reference/chatbot/list-conversations",
@@ -231,31 +307,13 @@
               "api-reference/chatbot/delete-conversation",
               "api-reference/chatbot/send-message"
             ]
-          },
-          {
-            "group": "Comments",
-            "pages": [
-              "api-reference/comments/list",
-              "api-reference/comments/create",
-              "api-reference/comments/update",
-              "api-reference/comments/delete"
-            ]
-          },
-          {
-            "group": "Audit Logs",
-            "pages": [
-              "api-reference/audit-logs/list",
-              "api-reference/audit-logs/stats",
-              "api-reference/audit-logs/export",
-              "api-reference/audit-logs/get"
-            ]
           }
         ]
       }
     ]
   },
   "background": {
-    "decoration": "grid"
+    "decoration": "gradient"
   },
   "css": "/global.css",
   "contextual": {

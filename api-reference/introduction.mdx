@@ -9,35 +9,21 @@ icon: "book"
 All API requests are made to:
 
 ```
-https://api.staging.insightflow.studio
+https://api.insightflow.studio
 ```
 
 ## Authentication
 
-Every request must include one of the following headers:
+Include your organization-scoped API key in the `X-Api-Key` header with every request.
 
-<Tabs>
-  <Tab title="API Key">
-    Include your organization-scoped API key in the `X-API-Key` header.
+```bash
+curl https://api.insightflow.studio/projects \
+  -H "X-Api-Key: ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
 
-    ```bash
-    curl https://api.staging.insightflow.studio/projects \
-      -H "X-API-Key: ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    ```
+API keys provide full organization-level access. The key format is 44 characters: `ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`.
 
-    API keys provide full organization-level access. The key format is 44 characters: `ak_XXXXXXXX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`.
-  </Tab>
-  <Tab title="Bearer Token">
-    Include a JWT access token in the `Authorization` header.
-
-    ```bash
-    curl https://api.staging.insightflow.studio/projects \
-      -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..."
-    ```
-
-    JWT tokens are obtained from the login endpoint and are user-scoped.
-  </Tab>
-</Tabs>
+Retrieve your API key from the InsightFlow dashboard under **Settings > API Keys**.
 
 ## Response Format
 
